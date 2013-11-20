@@ -16,9 +16,9 @@ style "default"
   ythickness = 2
 
   EelEditableLabel::cursor_aspect_ratio = 0.1
-  EelEditableLabel::cursor_color    = "#cc0000"
+  EelEditableLabel::cursor_color    = "#33ffff"
 
-  GtkEntry::cursor_color    = "#cc0000"
+  GtkEntry::cursor_color    = "#33ffff"
   GtkEntry::cursor_aspect_ratio = 0.1
 
   GtkHSV::focus-line-pattern = "\0"
@@ -26,7 +26,7 @@ style "default"
   GtkRange::stepper-size = 20
 
   GtkTextView::cursor_aspect_ratio = 0.1
-  GtkTextView::cursor_color    = "#cc0000"
+  GtkTextView::cursor_color    = "#33ffff"
 
   GtkTreeView::expander-size = 16
 
@@ -34,46 +34,46 @@ style "default"
   GtkWidget::focus-line-width = 2
   GtkWidget::focus-padding = 0
   GtkWidget::interior_focus = 1
-  GtkWidget::link-color = "#000060"
-  GtkWidget::visited-link-color = "#600000"
+  GtkWidget::link-color = "#ffff9f"
+  GtkWidget::visited-link-color = "#9fffff"
 
   # Nautilus
   NautilusIconContainer::frame_text = 1
 
   # Pidgin
-  GtkIMHtml::hyperlink-color = "#000060"
-  GtkIMHtml::hyperlink-visited-color = "#600000"
-  GtkIMHtml::hyperlink-prelight-color = "#404080"
+  GtkIMHtml::hyperlink-color = "#ffff9f"
+  GtkIMHtml::hyperlink-visited-color = "#9fffff"
+  GtkIMHtml::hyperlink-prelight-color = "#bfbf7f"
 
   # Evolution
-  GtkHTML::link_color = "#000060"
-  GtkHTML::vlink_color = "#600000"
-  GtkHTML::cite_color = "#003000"
+  GtkHTML::link_color = "#ffff9f"
+  GtkHTML::vlink_color = "#9fffff"
+  GtkHTML::cite_color = "#ffcfff"
 
-  fg[NORMAL]      = "#000000"
-  text[NORMAL]    = "#000000"
-  bg[NORMAL]      = "#ffffff"
-  base[NORMAL]    = "#ffffff"
+  fg[NORMAL]      = "#ffffff"
+  text[NORMAL]    = "#ffffff"
+  bg[NORMAL]      = "#000000"
+  base[NORMAL]    = "#000000"
 
-  fg[INSENSITIVE]      = "#999999"
-  text[INSENSITIVE]    = "#999999"
-  bg[INSENSITIVE]      = "#ccccff"
-  base[INSENSITIVE]    = "#ccccff"
+  fg[INSENSITIVE]      = "#666666"
+  text[INSENSITIVE]    = "#666666"
+  bg[INSENSITIVE]      = "#333300"
+  base[INSENSITIVE]    = "#333300"
 
-  fg[PRELIGHT]    = "#ccccff"
-  text[PRELIGHT]  = "#ccccff"
-  bg[PRELIGHT]    = "#000000"
-  base[PRELIGHT]  = "#000000"
+  fg[PRELIGHT]    = "#333300"
+  text[PRELIGHT]  = "#333300"
+  bg[PRELIGHT]    = "#ffffff"
+  base[PRELIGHT]  = "#ffffff"
 
-  fg[ACTIVE]      = "#000000"
-  text[ACTIVE]    = "#000000"
-  bg[ACTIVE]      = "#b8b891"
-  base[ACTIVE]    = "#b8b891"
+  fg[ACTIVE]      = "#ffffff"
+  text[ACTIVE]    = "#ffffff"
+  bg[ACTIVE]      = "#47476e"
+  base[ACTIVE]    = "#47476e"
 
-  fg[SELECTED]    = "#ffffff"
-  text[SELECTED]  = "#ffffff"
-  bg[SELECTED]    = "#000000"
-  base[SELECTED]  = "#333300"
+  fg[SELECTED]    = "#000000"
+  text[SELECTED]  = "#000000"
+  bg[SELECTED]    = "#ffffff"
+  base[SELECTED]  = "#ccccff"
 }
 
 class "GtkWidget" style "default"
