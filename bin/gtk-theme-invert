@@ -1,0 +1,184 @@
+#!/usr/bin/env ruby
+
+require 'find'
+require 'fileutils'
+
+# RGB to HSL converter | color conversion http://www.rapidtables.com/convert/color/rgb-to-hsl.htm
+# @param r [Integer] red 0..255
+# @param g [Integer] green 0..255
+# @param b [Integer] blue 0..255
+# @return [Integer[]] [hue, lightness, saturation]
+#   hue 0..360 degree
+#   lightness 0..100 %
+#   saturation 0..100 %
+def rgb_to_hls r, g, b
+  r /= 255.0
+  g /= 255.0
+  b /= 255.0
+  cmax = [r, g, b].max
+  cmin = [r, b, g].min
+  d = cmax - cmin
+  l = (cmax + cmin) / 2
+  return [0, (l * 100).floor, 0] if d == 0
+  h = case cmax
+      when r then 60 * ((g - b) / d % 6)
+      when g then 60 * ((b - r) / d + 2)
+      else        60 * ((r - g) / d + 4)
+      end
+  [ h,
+    l * 100,
+    d / (1 - (l * 2 - 1).abs) * 100
+  ].map &:floor
+end
+
+# HSL to RGB conversion | color conversion http://www.rapidtables.com/convert/color/hsl-to-rgb.htm
+# @param h [Integer] hue 0..360 degree
+# @param l [Integer] lightness 0..100 %
+# @param s [Integer] saturation 0..100 %
+# @return [Integer[]] [red, green, blue]
+#   red 0..255
+#   green 0..255
+#   blue 0..255
+def hls_to_rgb h, l, s
+  s /= 100.0
+  l /= 100.0
+  c = (1 - (l * 2 - 1).abs) * s
+  x = c * (1 - ((h / 60.0) % 2 - 1).abs)
+  m = l - c / 2
+  r, g, b = case
+            when h < 60  then [c, x, 0]
+            when h < 120 then [x, c, 0]
+            when h < 180 then [0, c, x]
+            when h < 240 then [0, x, c]
+            when h < 300 then [x, 0, c]
+            else              [c, 0, x]
+            end
+  [r, g, b].map{|channel| ((channel + m) * 255).ceil }
+end
+
+Color = Struct.new(:type, :r, :g, :b, :a)
+
+class Color
+
+  def negate
+    if :float == self.type then
+      return Color.new(
+        self.type,
+        1.0 - self.r,
+        1.0 - self.g,
+        1.0 - self.b,
+      )
+    end
+    return Color.new(
+      self.type,
+      255 - self.r,
+      255 - self.g,
+      255 - self.b,
+      self.a
+    )
+  end
+
+  def invert
+    if :float == self.type then
+      h, l, s = rgb_to_hls(self.r * 255, self.g * 255, self.b * 255)
+      r, g, b = hls_to_rgb(h, 100 - l, s)
+      return Color.new(self.type, r / 255.0, g / 255.0, b / 255.0)
+    end
+    h, l, s = rgb_to_hls(self.r, self.g, self.b)
+    r, g, b = hls_to_rgb(h, 100 - l, s)
+    return Color.new(self.type, r, g, b, self.a)
+  end
+
+  def to_s
+    case self.type
+    when :hex
+      '#%02x%02x%02x' % [self.r, self.g, self.b]
+    when :rgb
+      'rgb (%u, %u, %u)' % [self.r, self.g, self.b]
+    when :rgba
+      'rgba (%u, %u, %u, %.2f)' % [self.r, self.g, self.b, self.a]
+    when :float
+      '{ %.2f, %.2f, %.2f }' % [self.r, self.g, self.b]
+    end
+  end
+
+end
+
+module Image
+
+  def self.negate(src, dst)
+    system('convert', src, '-negate', dst)
+  end
+
+  def self.invert(src, dst)
+    system('convert', src, '-colorspace', 'HSL', '-channel', 'Luminance', '-negate', dst)
+  end
+
+end
+
+exit 1 unless (1..3).include?(ARGV.size)
+
+input = File.expand_path(ARGV.shift)
+output = File.expand_path(ARGV.shift)
+mode = ARGV.size > 0 ? ARGV.shift : :invert
+
+Find.find(input) do |src_path|
+
+  next unless File.file?(src_path)
+
+  entry = src_path[input.size+1..-1]
+  dst_path = File.join(output, entry)
+  FileUtils.mkdir_p(File.dirname(dst_path))
+
+  case File.basename(src_path)
+  when 'gtkrc'
+  when 'gtk.css'
+  when /\.(css|ini|rc)$/
+  when /\.(png|jpg)$/
+    puts "converting #{entry}"
+    Image.send(mode, src_path, dst_path)
+    next
+  else
+    puts "copying #{entry}"
+    FileUtils.cp(src_path, dst_path)
+    next
+  end
+
+  puts "converting #{entry}"
+
+  src = File.open(src_path, 'r')
+  dst = File.open(dst_path, 'w')
+
+  while src.gets
+
+    $_.gsub!(/\B#([0-9A-Fa-f]{6}\b)/) do |match|
+      c = Color.new(:hex, *$1.scan(/../).map { |str| str.to_i(16) })
+      c.send(mode)
+    end
+
+    $_.gsub!(/\B#([0-9A-Fa-f]{3}\b)/) do |match|
+      c = Color.new(:hex, *$1.scan(/./).map { |str| (str * 2).to_i(16) })
+      c.send(mode)
+    end
+
+    $_.gsub!(/\brgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/) do |match|
+      c = Color.new(:rgb, $1.to_i, $2.to_i, $3.to_i)
+      c.send(mode)
+    end
+
+    $_.gsub!(/\brgba\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([0-9.]+)\s*\)/) do |match|
+      c = Color.new(:rgba, $1.to_i, $2.to_i, $3.to_i, $4.to_f)
+      c.send(mode)
+    end
+
+    $_.gsub!(/{\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)\s*}/) do |match|
+      c = Color.new(:float, $1.to_f, $2.to_f, $3.to_f, $4.to_f)
+      c.send(mode)
+    end
+
+    dst.puts($_)
+
+  end
+
+end
+
