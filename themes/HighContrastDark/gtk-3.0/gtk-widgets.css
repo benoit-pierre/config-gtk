@@ -1179,7 +1179,7 @@ GtkProgressBar.osd.progressbar {
  *******/
 .titlebar {
     background-color: @theme_base_color;
-    border-radius: 7px 7px 0px 0px;
+    border-radius: 0px 0px 0px 0px;
 }
 
 /* this is the default titlebar that is added by GTK
@@ -1211,22 +1211,6 @@ GtkProgressBar.osd.progressbar {
 .titlebar .titlebutton:active {
     background-color: @theme_button_active_bg;
     color: @theme_base_color;
-}
-
-.window-frame {
-    border-color: lighter(@theme_bg_color);
-    border-radius: 7px 7px 0 0;
-    border-width: 1px;
-    border-style: solid;
-
-    box-shadow: 0 2px 8px 3px alpha(white, 0.7);
-
-    /* this is used for the resize cursor area */
-    margin: 10px;
-}
-
-.window-frame:backdrop {
-    box-shadow: 0 2px 5px 1px alpha(white, 0.7);
 }
 
 /**********************
