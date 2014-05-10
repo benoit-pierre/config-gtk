@@ -1,1 +1,3 @@
 include "/home/bpierre/.themes/HighContrastDark/gtk-2.0/gtkrc"
+
+gtk-keynav-cursor-only=1
