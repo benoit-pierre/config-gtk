@@ -1,3 +1,2 @@
-include "/home/bpierre/.themes/HighContrastDark/gtk-2.0/gtkrc"
-
+gtk-theme-name="HighContrastDark"
 gtk-keynav-cursor-only=1
