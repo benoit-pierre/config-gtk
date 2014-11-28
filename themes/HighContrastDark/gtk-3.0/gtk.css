@@ -54,9 +54,9 @@
   -GtkDialog-action-area-border: 0;
   -GtkStatusbar-shadow-type: none;
   outline-color: rgba (255, 255, 255, 0.30);
-  outline-style: dashed;
+  outline-style: solid;
   outline-offset: -3px;
-  outline-width: 1px;
+  outline-width: 2px;
   outline-radius: 2px; }
 
 /***************
